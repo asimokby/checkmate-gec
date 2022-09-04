@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"
+      referrerpolicy="origin"
+    ></script>
+  </script>
+    <script>
+      tinymce.init({
+        selector: "#mytextarea",
+      });
+    </script>
+
+<style>
+  form.p {
+    display: inline;
+  }
+</style>
+    <title>Document</title>
+  </head>
+  <body>
+    <form method="post" style="width: 50%">
+      <textarea name="mytextarea" id="mytextarea">{{ textValue|safe }}</textarea>
+      <button id="submitIt" type="submit"> Submit</button>
+
+    </form>
+
+    <p id="checkHere"></p>
+  </body>
+  <script>
+    function checkText(e) {
+      e.preventDefault();
+      console.log("ok");
+      console.log(e);
+    }
+  </script>
+  <!-- <script src="index.js"></script> -->
+</html>
