@@ -55,6 +55,7 @@ def correct_errors(text):
     output = []
     sent_text = nltk.sent_tokenize(text)
     for sent in sent_text:
+        print(sent)
         result = happy_tt.generate_text(f"grammar: {sent}", args=args)
         bad_idxs = [idx for idx, elem in enumerate(result.text.split()) if elem != sent.split()[idx]]
         output.append([sent, bad_idxs, result.text])
