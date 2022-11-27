@@ -39,9 +39,8 @@ def index():
         # Cleaning the html tags from the data
         cleantext = re.sub(CLEANR, '', data)
         # setting the global value to the cleaned data
-        value = checkText(cleantext.split())
         output = correct_errors(cleantext)
-        print(output)
+        value = sendText(output)
         return redirect(url_for('index'))
 
 
@@ -61,7 +60,21 @@ def correct_errors(text):
 
     return output
 
+def sendText(text):
+    # checking if text is correct
+    checkedWords = ''
 
+    for sentence in text:
+        if(len(sentence[1]) == 0):
+            checkedWords += sentence[0] + ' '
+        else:
+            for idx, word in enumerate(sentence[0].split()):
+                if idx in sentence[1]:
+                    checkedWords += ('<del><span class="wrong" style="color:red">' +
+                                     word +'</del> ' + '</span>' +'<span class="" style="color: green">'+ sentence[2].split()[idx] + ' '+'</span>')
+                else:
+                    checkedWords += word + ' '
+    return checkedWords
 def checkText(text):
     # checking if text is correct
     correctWords = ['this', 'hello', 'world']
