@@ -3,6 +3,11 @@ from flask import Flask
 from flask import render_template, request, redirect, url_for
 from flask_cors import CORS
 import re
+import nltk
+from happytransformer import HappyTextToText, TTSettings
+
+nltk.download('punkt')
+
 CLEANR = re.compile('<.*?>')
 app = Flask(__name__)
 CORS(app)
@@ -10,6 +15,10 @@ CORS(app)
 # making a global value so it doesn't reset every time
 global value
 value = None
+
+
+happy_tt = HappyTextToText("T5", "vennify/t5-base-grammar-correction")
+args = TTSettings(num_beams=5, min_length=1)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -31,7 +40,26 @@ def index():
         cleantext = re.sub(CLEANR, '', data)
         # setting the global value to the cleaned data
         value = checkText(cleantext.split())
+        output = correct_errors(cleantext)
+        print(output)
         return redirect(url_for('index'))
+
+
+def correct_errors(text):
+    """ 
+        Returns a list of tuples containing: 
+            0th index: the sentence.
+            1th index: the indexes where the model detected an error. 
+            2th index: the corrected sentence. 
+    """
+    output = []
+    sent_text = nltk.sent_tokenize(text)
+    for sent in sent_text:
+        result = happy_tt.generate_text(f"grammar: {sent}", args=args)
+        bad_idxs = [idx for idx, elem in enumerate(result.text.split()) if elem != sent.split()[idx]]
+        output.append([sent, bad_idxs, result.text])
+
+    return output
 
 
 def checkText(text):
